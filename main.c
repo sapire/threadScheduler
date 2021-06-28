@@ -1,9 +1,9 @@
 #include <stdio.h>
 
 char* taskGetName()
-//returns a unique ascii name of the thread, less than 19 bytes long
 {
-	//TODO
+	//returns a unique ascii name of the thread, less than 19 bytes long
+
 }
 
 int taskGetId()
