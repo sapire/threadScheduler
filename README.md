@@ -1,4 +1,4 @@
-# threadScheduler
+# Thread Scheduler
 
 The program activates N threads (N is given via the command line, N<10). It implements an internal scheduling system for its N threads.
 The scheduler picks a thread to run from the queue, according to its priority.
