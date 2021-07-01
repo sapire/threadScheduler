@@ -1,14 +1,44 @@
 #include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <unistd.h>  //Header file for sleep(). man 3 sleep for details.
+#include <pthread.h>
 
-char* taskGetName()
+struct node
 {
-	//returns a unique ascii name of the thread, less than 19 bytes long
+    int asciiName;
+    struct node *next;
+}typedef node;
 
-}
+
+
+/********************************/
 
 int taskGetId()
 {
 	//returns a unique id
+
+	//counter+linked list
+
+	static int counter = 0;
+	static node *front = NULL;
+	if (front == NULL)
+	{
+		if (counter < 19*8)
+		{
+			return counter++;
+		}
+		else
+		{
+			//TODO: exception
+
+		}
+		
+	}
+
+	node* temp = front;
+	front = front->next;
+	return temp->asciiName;
 }
 
 bool taskShouldSuspend()
@@ -44,4 +74,15 @@ int taskPrio()
 void taskWake(int pid)
 {
 	//wake a task by its pid
+
+	
+
+}
+
+/***********/
+
+int main()
+{
+	printf(sizeof(char));
+
 }
