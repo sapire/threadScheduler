@@ -18,19 +18,20 @@ typedef struct task
     bool isSuspended; //true if the task is suspended, false if it is running
     struct timeval tv; //last time the task run - to know when to release the task
     int suspensionTime; //how long the task has been suspended, not sure if needed?????????
+	
 
 }task;
 
-task* taskArray[MAX_TASKS];
+task* tasksArray[MAX_TASKS];
 char buff[MAX_LEN]; // the buffer holds the name of the current running task
 
 task* taskGetPointer(int id)
 {
       for(int i = 0;i<MAX_TASKS;i++)
 	  {
-		if(taskArray[i]->id==id)
+		if(tasksArray[i]->id==id)
 	  	{
-        	return taskArray[i];
+        	return tasksArray[i];
       	}
 	  }
     return NULL;
@@ -85,28 +86,45 @@ void taskSuspend(int id)
 	//suspends a task until released
 	// check how??? maybe sleep...
 	task* t = taskGetPointer(id);
+
+	while (t->isSuspended);
 	
 }
 
-void taskWait(int numOfSeconds)
+
+
+void taskWait(int numOfSeconds, int id)
 {
 	//suspends a task for n seconds
 	// wait(numOfSeconds);
 	//?????????
-	sleep(numOfSeconds);
+	
+	task* t = taskGetPointer(id);
+	t->isSuspended = true;
+	usleep(numOfSeconds * 1000000);
+	t->isSuspended = false;
 	// https://stackoverflow.com/questions/10922900/is-it-possible-to-wait-a-few-seconds-before-printing-a-new-line-in-c#10923084
 
 }
 
 char* taskGetMem()
 {
-	// return &buff;
+	return &buff;
 	
 }
 
-void taskReleaseMem()
+void taskSetMem(char* taskName)
+{
+	int n = 0;
+	for (n = 0; taskName != '\0'; ++n);
+	strncpy(buff, taskName, n);
+}
+
+void taskReleaseMem() //TODO: 
 {
 	//release the buffer
+	fflush(buff);
+	free(buff);
 
 }
 
@@ -117,7 +135,7 @@ int taskPrio(int id)
 	return t->priority;
 }
 
-void taskWake(int pid)
+void taskWake(int pid) //TODO: 
 {
 	//wake a task by its pid
 
@@ -128,10 +146,24 @@ void taskWake(int pid)
 int priorityArray[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 int IdArray[] = {100, 101, 102, 103, 104, 105, 106, 107, 108, 109};
 char* asciiArray[] = {"task0", "task1", "task2", "task3", "task4", "task5", "task6", "task7", "task8", "task9"};
-task* taskCreate() // ????
+task* taskCreate(int i) // ????
 {
+	if (i>9 || i<0)
+	{
+		printf("Failure! ID must be in range of 0-9!!!");
+		return -1;
+	}
+	
 	task* t = malloc(sizeof(task));
-	t->id = 
+	t->id = IdArray[i];
+	t->priority = priorityArray[i];
+	t->isSuspended = true;
+	// t->name = asciiArray[i];
+	// int n = sizeof(asciiArray[i]);
+	int n = 0;
+	for (n = 0; asciiArray[i] != '\0'; ++n);
+	strncpy(t->name, asciiArray[i], n);
+	tasksArray[i] = t;
 }
 
 /***********/
@@ -149,7 +181,7 @@ void runTask(int id)
 		printf ("Cur Task is %s Last Task is %s", taskGetName(id), ptr);
 		taskSetMem(taskGetName(id)); // Set New current task
 		taskReleaseMem();
-		taskWait(1); // sleep for 1 seconds
+		taskWait(1, id); // sleep for 1 seconds
 	} while (1);
 	
 }
@@ -167,6 +199,12 @@ int main(int argc, char* argv[])
 	//(5) The program accepts n as the number of threads, and p as the number of cores.
 	int n = argv[1]; //number of threads
 	int p = argv[2]; //number of cores
+
+	for (int i = 0; i < n; i++)
+	{
+		taskCreate(i);
+	}
+	
 
 	//(6) A task priority is an arbitrary number ranging from 0 to N-1. Larger priority is the larger number. No two tasks share the same priority.
 
