@@ -125,9 +125,13 @@ void taskWake(int pid)
 
 }
 
+int priorityArray[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+int IdArray[] = {100, 101, 102, 103, 104, 105, 106, 107, 108, 109};
+char* asciiArray[] = {"task0", "task1", "task2", "task3", "task4", "task5", "task6", "task7", "task8", "task9"};
 task* taskCreate() // ????
 {
-
+	task* t = malloc(sizeof(task));
+	t->id = 
 }
 
 /***********/
